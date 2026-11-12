@@ -1,0 +1,20 @@
+{
+  "synthetic": true,
+  "description": "Fictional portfolio examples, not a production export.",
+  "clients": [
+    {
+      "id": "demo-001",
+      "business_name": "Example Home Services",
+      "industry": "Home services",
+      "email": "owner@example.com",
+      "status": "draft"
+    },
+    {
+      "id": "demo-002",
+      "business_name": "Sample Neighborhood Studio",
+      "industry": "Fitness",
+      "email": "studio@example.com",
+      "status": "draft"
+    }
+  ]
+}

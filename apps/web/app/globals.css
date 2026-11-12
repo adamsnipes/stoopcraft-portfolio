@@ -1,0 +1,373 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   Theme tokens — "Bold confident contrast" brand refresh.
+   ----------------------------------------------------------------------------
+   Light base shifts from warm cream → cool neutral (less hospitality-cozy,
+   more software-product). Signature accent flips amber → electric cobalt.
+   Display face flips Fraunces (serif) → Space Grotesk (geometric sans with
+   character), keeping Geist as the workhorse body font.
+
+   Note on naming: tokens are still called `amber-accent` / `amber-accent-soft`
+   for historical reasons (touched by ~60 files). Values are now cobalt blue.
+   Treat the names as "brand accent" / "brand accent soft."
+   ============================================================================ */
+
+@theme {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-space-grotesk);
+
+  /* Light base — cool, near-white, neutral. Drops the warm cream tint that
+     dominated the previous palette. */
+  --color-cream-50: #fafaf9;
+  --color-cream-100: #f5f5f4;
+  --color-cream-200: #e7e5e4;
+
+  /* Ink — true black-ish, max contrast against the cool light base. */
+  --color-ink-900: #0a0a0a;
+  --color-ink-800: #18181b;
+  --color-ink-700: #3f3f46;
+
+  /* Signature accent — electric cobalt. ONE color does all the work:
+     CTAs, links, glows, focus rings, emphasis. */
+  --color-amber-accent: #2563eb;       /* cobalt-600 — main accent on light bg */
+  --color-amber-accent-soft: #60a5fa;  /* cobalt-400 — glows / pings on dark bg */
+
+  /* StoopCraft Marketing (the /marketing ad-management funnel) — navy + gold,
+     matched to the Facebook/Instagram ad creative. Scoped by usage: only the
+     /marketing page reaches for these; the rest of the platform stays cobalt. */
+  --color-navy-950: #050d1a;  /* deepest backdrop / vignette */
+  --color-navy-900: #0a1a2f;  /* hero base */
+  --color-navy-800: #10233d;  /* raised surfaces / cards */
+  --color-navy-700: #1b3355;  /* borders / hairlines */
+  --color-gold-300: #f2cf74;  /* highlight / gradient top */
+  --color-gold-400: #e7b43c;  /* primary gold — headlines, accents */
+  --color-gold-500: #d09a2b;  /* gradient bottom / pressed */
+}
+
+/* Gold aurora for the marketing hero — same idea as .glow-amber but warm. */
+.glow-gold {
+  background-image:
+    radial-gradient(55% 55% at 25% 15%, rgba(231, 180, 60, 0.20) 0%, transparent 60%),
+    radial-gradient(50% 50% at 85% 85%, rgba(208, 154, 43, 0.14) 0%, transparent 60%);
+}
+
+body {
+  background: var(--color-cream-50);
+  color: var(--color-ink-900);
+}
+
+/* ----------------------------------------------------------------------------
+   Accent "helper" vars used by the shared agency ContactForm so it can render
+   correctly on BOTH landing themes without per-page forks:
+     --accent-strong : accent used AS text/icon on a light surface (eyebrows)
+     --accent-hover  : accent fill on :hover (darker than the base accent)
+     --accent-ink    : text/icon color placed ON an accent fill
+   Defaults below reproduce the gold landing values exactly, so every existing
+   usage (homepage `.landing-gold`, /marketing, etc.) renders byte-identically.
+   `.landing-green` (the landscapers campaign LP) overrides them to green. */
+:root {
+  --accent-strong: #9a6d0f;
+  --accent-hover: #d99a12;
+  --accent-ink: #0a0a0a;
+}
+.landing-gold {
+  --accent-ink: #0d0d0d; /* == ink-900 inside .landing-gold; visually identical */
+}
+
+/* Hero glow — cobalt aurora on the dark hero. Used as `.glow-amber` for
+   backwards-compat with existing class names. */
+.glow-amber {
+  background-image:
+    radial-gradient(60% 60% at 30% 20%, rgba(96, 165, 250, 0.22) 0%, transparent 60%),
+    radial-gradient(50% 50% at 80% 80%, rgba(37, 99, 235, 0.18) 0%, transparent 60%);
+}
+
+/* ============================================================================
+   Landing palette — "soft black + warm white + restrained gold."
+   ----------------------------------------------------------------------------
+   Scoped to the marketing homepage subtree (the `.landing-gold` root class in
+   app/page.tsx) so it does NOT disturb the platform-wide cobalt accent, which
+   ~60 admin/portal files rely on via these same token names. Because Tailwind
+   v4 `@theme` utilities compile to `var(--color-*)` references, redefining the
+   variables on this scope re-tints every `bg-ink-900` / `text-cream-50` /
+   `text-amber-accent` inside the landing page — and nothing outside it.
+   ============================================================================ */
+.landing-gold {
+  --font-display: var(--font-bricolage); /* headline face — landing only */
+  --color-ink-900: #0d0d0d;   /* soft black — page background */
+  --color-ink-800: #181818;   /* elevated cards / dark surfaces */
+  --color-cream-50: #f7f4ed;  /* warm white — primary text on dark, light-section bg */
+  --color-cream-100: #e9e4d8; /* warm light — secondary text base (used at opacity) */
+  --color-amber-accent: #f5b82e;      /* restrained gold — CTAs, emphasis, accents */
+  --color-amber-accent-soft: #f7c24a; /* lighter gold — eyebrows, pings, icons on dark */
+}
+
+/* Restrained gold haze for the landing hero/CTA — replaces the cobalt aurora
+   with a faint warm glow (low opacity, no bright metallic wash). */
+.landing-gold .glow-amber {
+  background-image:
+    radial-gradient(55% 55% at 30% 20%, rgba(245, 184, 46, 0.10) 0%, transparent 60%),
+    radial-gradient(45% 45% at 80% 80%, rgba(245, 184, 46, 0.06) 0%, transparent 60%);
+}
+
+/* ============================================================================
+   Landscapers campaign LP — "light + green" (app/landscapers).
+   ----------------------------------------------------------------------------
+   Matches the Facebook/Instagram ad creative: white/warm-white surfaces,
+   charcoal text, forest-green accent. Scoped to the `.landing-green` root class
+   so — like `.landing-gold` — it only re-tints its own subtree. Redefining
+   `--color-amber-accent` here turns every `bg-amber-accent` / `text-amber-accent`
+   inside the page (and inside the shared ContactForm it renders) green, while
+   the platform-wide cobalt and the homepage gold stay untouched.
+   ============================================================================ */
+.landing-green {
+  --font-display: var(--font-bricolage); /* headline face — landing pages only */
+  --color-amber-accent: #4c7a30;         /* forest green — CTAs, emphasis, accents */
+  --color-amber-accent-soft: #6fae45;    /* lighter green — pings, soft icons, glows */
+  --accent-strong: #3c6a24;              /* deep green — accent text/eyebrows on light */
+  --accent-hover: #3e6a26;               /* button hover — slightly darker than base */
+  --accent-ink: #ffffff;                 /* white text/icons ON a green fill */
+}
+
+/* Soft green haze for the light hero — a faint natural wash, no hard edges. */
+.landing-green .glow-green {
+  background-image:
+    radial-gradient(50% 55% at 20% 15%, rgba(76, 122, 48, 0.10) 0%, transparent 60%),
+    radial-gradient(45% 45% at 85% 10%, rgba(111, 174, 69, 0.10) 0%, transparent 60%);
+}
+
+/* ============================================================================
+   Free-website funnel LP — "warm white + gold" (app/free-website).
+   ----------------------------------------------------------------------------
+   Conversion experiment against the dark homepage: same offer, inverted
+   palette. White/warm-white surfaces, warm near-black text, gold reserved for
+   CTAs and emphasis. Scoped to the `.landing-light` root class so — like
+   `.landing-gold` and `.landing-green` — it only re-tints its own subtree and
+   leaves the platform-wide cobalt alone.
+
+   Contrast notes: `--color-amber-accent` is the BUTTON FILL (large color block
+   on white, paired with near-black `--accent-ink`). Gold as *text* on white
+   would fail WCAG AA, so accent text/eyebrows use the darker
+   `--accent-strong` (#8a6008, ~5.6:1 on white) instead. Never swap the two.
+   ============================================================================ */
+.landing-light {
+  /* Archivo (display) + Source Sans 3 (text). Both are loaded by
+     app/free-website/page.tsx, not the root layout, so they preload for that
+     route alone — see the type note there for why this pairing over the
+     Inter/Geist/Bricolage default set. Redefining --font-sans here re-points
+     every `font-sans` utility inside this subtree and nothing outside it. */
+  --font-display: var(--font-archivo);
+  --font-sans: var(--font-source-sans);
+  --color-ink-900: #15120c;   /* warm near-black — headings & primary text */
+  --color-ink-800: #241f16;   /* dark surfaces used sparingly (price card, bands) */
+  --color-cream-50: #ffffff;  /* page background */
+  --color-cream-100: #f6f2e7; /* warm off-white — inset surfaces inside cards */
+  --color-cream-200: #ded4bd; /* hairlines, progress tracks */
+
+  /* Section rhythm — `--surface-band`, `--on-band` and `--surface-inset` are
+     NOT declared here. They are set as inline custom properties on the page
+     root in app/free-website/page.tsx (see the SURFACES note there): this dev
+     server does not re-emit the compiled globals.css chunk when only a custom
+     property changes, so tuning them here required a full restart every time,
+     while a TSX edit hot-reloads. The `bg-[var(--surface-band)]` utilities are
+     still generated from the class names as normal. */
+  --color-amber-accent: #d69a15;      /* gold — CTA fills, rules, emphasis blocks */
+  --color-amber-accent-soft: #f2c14e; /* light gold — pings, soft icon washes */
+  --accent-strong: #7d5607;           /* deep gold — accent TEXT on white AND on --surface-band */
+  --accent-hover: #b8820c;            /* button hover — darker than the base fill */
+  --accent-ink: #1a1509;              /* near-black text/icons ON a gold fill */
+}
+
+/* Archivo carries a width axis. Nudging headlines just past normal gives them
+   the squared-off, slightly-wide set of a Franklin-style gothic, which is what
+   separates it from a default grotesque at a glance. Ignored harmlessly if the
+   variable axis fails to load. */
+.landing-light h1,
+.landing-light h2,
+.landing-light h3 {
+  font-variation-settings: 'wdth' 104;
+}
+
+/* Warm gold haze for the light hero — a faint wash, no hard edges. Overrides
+   the cobalt aurora the base `.glow-amber` paints. */
+.landing-light .glow-amber {
+  background-image:
+    radial-gradient(55% 60% at 18% 12%, rgba(214, 154, 21, 0.14) 0%, transparent 62%),
+    radial-gradient(50% 50% at 88% 8%, rgba(242, 193, 78, 0.16) 0%, transparent 62%);
+}
+
+/* Smooth anchor scrolling for the funnel LP. `scroll-behavior` only takes
+   effect on the scrolling element (html), which a page component can't set —
+   so scope it with :has() to documents that actually render `.landing-light`.
+   Honours prefers-reduced-motion. */
+html:has(.landing-light) { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html:has(.landing-light) { scroll-behavior: auto; }
+}
+
+/* Hairline gold rule used above section eyebrows. */
+.landing-light .gold-rule {
+  background-image: linear-gradient(to right, transparent, rgba(214, 154, 21, 0.55), transparent);
+}
+
+/* Faint grid texture for hero backdrop */
+.grid-texture {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 80%);
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(var(--tw-rotate, 0deg)); }
+  50% { transform: translateY(-8px) rotate(var(--tw-rotate, 0deg)); }
+}
+
+.animate-float {
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Claim banner (ClaimBanner.tsx) is a sticky bar on unclaimed template-site
+   previews. When present, the site's own sticky <Nav> (Tailwind `sticky top-0`)
+   must pin BELOW the banner instead of at the very top, so both stay visible as
+   you scroll. Higher specificity than the `.top-0` utility, and scoped to the
+   data-attr so it's completely inert on claimed sites (banner absent). */
+.dfy-site[data-claim-banner="1"] .dfy-nav {
+  top: var(--claim-banner-h, 2.75rem);
+}
+
+/* ============================================================================
+   Blog reading typography — scopes the rendered Markdoc body (MarkdocContent).
+   Standard elements come out as plain tags; this gives them an editorial,
+   mobile-scannable rhythm (UNIVERSAL §24) using the site's own tokens: Geist
+   body, Space Grotesk headings, cobalt accent. `.not-prose` opts a subtree out
+   (used by CtaBlock/Callout so their own styling wins).
+   ============================================================================ */
+.blog-prose {
+  --prose-body: var(--color-ink-800);
+  --prose-muted: var(--color-ink-700);
+  color: var(--prose-body);
+  font-size: 1.075rem;
+  line-height: 1.75;
+}
+.blog-prose > :first-child { margin-top: 0; }
+.blog-prose p,
+.blog-prose ul,
+.blog-prose ol,
+.blog-prose blockquote,
+.blog-prose pre,
+.blog-prose table,
+.blog-prose figure {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+}
+.blog-prose h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.6rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--color-ink-900);
+  margin-top: 2.2em;
+  margin-bottom: 0.6em;
+  scroll-margin-top: 5rem;
+}
+.blog-prose h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.25rem;
+  line-height: 1.3;
+  color: var(--color-ink-900);
+  margin-top: 1.8em;
+  margin-bottom: 0.5em;
+  scroll-margin-top: 5rem;
+}
+.blog-prose h4 {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--color-ink-900);
+  margin-top: 1.6em;
+  margin-bottom: 0.4em;
+}
+.blog-prose a {
+  color: var(--color-amber-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+.blog-prose a:hover { text-decoration-thickness: 2px; }
+.blog-prose strong { color: var(--color-ink-900); font-weight: 600; }
+.blog-prose ul,
+.blog-prose ol { padding-left: 1.4em; }
+.blog-prose ul { list-style: disc; }
+.blog-prose ol { list-style: decimal; }
+.blog-prose li { margin-top: 0.4em; margin-bottom: 0.4em; }
+.blog-prose li::marker { color: var(--color-ink-700); }
+.blog-prose blockquote {
+  border-left: 3px solid var(--color-amber-accent);
+  padding: 0.25em 0 0.25em 1.1em;
+  color: var(--prose-muted);
+  font-style: italic;
+}
+.blog-prose code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--color-cream-100);
+  border: 1px solid var(--color-cream-200);
+  border-radius: 0.35rem;
+  padding: 0.12em 0.38em;
+}
+.blog-prose pre {
+  background: var(--color-ink-900);
+  color: var(--color-cream-50);
+  border-radius: 0.75rem;
+  padding: 1.1rem 1.25rem;
+  overflow-x: auto;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+.blog-prose pre code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+}
+.blog-prose img {
+  border-radius: 0.85rem;
+  max-width: 100%;
+  height: auto;
+}
+.blog-prose hr {
+  border: 0;
+  border-top: 1px solid var(--color-ink-900);
+  opacity: 0.1;
+  margin: 2.5em 0;
+}
+.blog-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  display: block;
+  overflow-x: auto;
+}
+.blog-prose th,
+.blog-prose td {
+  border: 1px solid var(--color-cream-200);
+  padding: 0.6em 0.8em;
+  text-align: left;
+  vertical-align: top;
+}
+.blog-prose th {
+  background: var(--color-cream-100);
+  font-weight: 600;
+  color: var(--color-ink-900);
+}

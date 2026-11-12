@@ -1,0 +1,20 @@
+{
+  "name": "dfy-websites",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "test": "vitest run",
+    "test:ui": "vitest --ui",
+    "typecheck": "pnpm --filter web typecheck"
+  },
+  "devDependencies": {
+    "@dfy/db": "workspace:*",
+    "@supabase/supabase-js": "^2.105.0",
+    "@types/node": "^20.19.39",
+    "@vitest/ui": "^4.1.5",
+    "tsx": "^4.21.0",
+    "vitest": "^4.1.5"
+  }
+}
